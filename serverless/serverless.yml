@@ -1,0 +1,35 @@
+service: saffron
+
+provider:
+  stage: dev
+  name: aws
+  runtime: nodejs8.10
+  region: us-east-1
+  environment:
+    AWS_IOT_HOST: 'adx5fx5ykfiey.iot.us-east-1.amazonaws.com'
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - iot:*
+      Resource: "*"
+
+functions:
+  handler:
+    memorySize: 1536
+    timeout: 300
+    handler: src/handler.mqtt
+    events:
+      - iot:
+          sql: "SELECT * FROM 'saffron/session'"
+    
+  session:
+    handler: src/handler.session
+    events:
+      - http:
+          method: OPTIONS
+          path: /
+          cors: true
+      - http:
+          method: GET
+          path: /
+          cors: true

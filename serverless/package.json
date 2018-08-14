@@ -1,0 +1,16 @@
+{
+  "name": "saffron-serverless",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "aws-sdk": "^2.287.0",
+    "eslint": "^5.3.0",
+    "standard": "^11.0.1"
+  },
+  "dependencies": {
+    "aws-sign-mqtt": "^0.0.1",
+    "mqtt": "^2.18.3",
+    "pdflatex-lambda": "^0.0.6"
+  }
+}
