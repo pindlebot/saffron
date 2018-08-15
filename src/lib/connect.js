@@ -2,13 +2,12 @@ import mqtt from 'mqtt'
 import 'whatwg-fetch'
 
 const ENDPOINT_URL = ' https://5kh06s5uoa.execute-api.us-east-1.amazonaws.com/dev/'
+const topics = {
+  SESSION: 'saffron/session'
+}
+let channel
 
 export default (texBuffer, { update, progress }) => {
-  const topics = {
-    SESSION: 'saffron/session'
-  }
-  let channel
-
   const publish = () => new Promise((resolve, reject) =>
     channel.publish(topics.REQUEST, texBuffer, { qos: 1 }, resolve))
 
@@ -19,13 +18,14 @@ export default (texBuffer, { update, progress }) => {
     topics.REQUEST = `saffron/${channelId}/request`
     topics.CONNECTED = `saffron/${channelId}/connected`
     topics.PROGRESS = `saffron/${channelId}/progress`
+    topics.END = `saffron/${channelId}/end`
 
     channel = mqtt.connect(endpointUrl)
     await new Promise((resolve, reject) => channel.on('connect', resolve))
     await new Promise((resolve, reject) => channel.subscribe(topics.PROGRESS, resolve))
     await new Promise((resolve, reject) => channel.subscribe(topics.CONNECTED, resolve))
     await new Promise((resolve, reject) => channel.subscribe(topics.RESPONSE, resolve))
-
+    await new Promise((resolve, reject) => channel.subscribe(topics.END, resolve))
     await new Promise((resolve, reject) => {
       channel.publish(topics.SESSION, JSON.stringify({ channelId, endpointUrl }), { qos: 1 }, resolve)
     })
@@ -45,7 +45,9 @@ export default (texBuffer, { update, progress }) => {
     })
     channel.on('message', (topic, buffer) => {
       console.log({ topic })
-
+      if (topic === topics.END) {
+        channel.end()
+      }
       if (topic === topics.CONNECTED) {
         console.log(buffer.toString())
         publish()
@@ -62,7 +64,6 @@ export default (texBuffer, { update, progress }) => {
       }
     })
   }
-
   if (channel && channel.connected) {
     return publish()
   }

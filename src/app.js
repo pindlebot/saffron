@@ -12,6 +12,7 @@ import './styles.scss'
 import PlayButton from './components/PlayButton'
 import { base64ToUint8Array } from './lib/util'
 import PlaygroundEditor from './components/PlaygroundEditor'
+import DownloadIcon from './components/DownloadIcon'
 
 class App extends React.Component {
   state = {
@@ -30,21 +31,30 @@ class App extends React.Component {
     buffer: '',
     style: {},
     loading: false,
-    progress: 100
+    progress: 100,
   }
 
   onChange = editorState => {
     this.setState({ editorState })
   }
+
+  download = () => {
+    let blob = new Blob([this.state.buffer], { type: 'application/pdf' })
+    let url = window.URL.createObjectURL(blob)
+    window.open(url)
+    setTimeout(() => window.URL.revokeObjectURL(url), 100)
+  }
   
   handlePlay = async () => {
     const tex = this.state.editorState.getCurrentContent()
       .getPlainText('\n')
+   
     this.setState({ loading: true, buffer: undefined })
     let channel = await connect(Buffer.from(tex), {
       update: buffer => {
+        let uint8Array = base64ToUint8Array(buffer.toString())
         this.setState({
-          buffer: base64ToUint8Array(buffer.toString()),
+          buffer: uint8Array,
           loading: false
         })
       },
@@ -57,11 +67,11 @@ class App extends React.Component {
   componentDidMount () {
     let rect = this.ref.getBoundingClientRect()
     let height = rect.width * Math.sqrt(2)
-    this.setState({
-      style: {
-        height: `${height}px`
-      }
-    })
+    // this.setState({
+    //  style: {
+    //    height: `${height}px`
+    //  }
+    // })
   }
 
   render() {
@@ -70,7 +80,7 @@ class App extends React.Component {
         <div className='background' />
         <header>
           <div className={'upper'}>
-            <div />
+            <div className={'result active'}>PdfLatex</div>
           </div>
           <div className={'lower'}>
             <PlayButton
@@ -98,6 +108,11 @@ class App extends React.Component {
               style={this.state.style}
               className={'pdf-preview'}
             >
+              <div className={'toolbar'}>
+                <button onClick={this.download} className={'download'}>
+                  <DownloadIcon />
+                </button>
+              </div>
               {this.state.buffer &&
                 <PdfEmbed data={this.state.buffer} />
               }

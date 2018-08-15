@@ -38,10 +38,11 @@ class PdfEmbed extends React.Component {
     const viewport = page.getViewport(this.props.scale)
     const canvas = this.canvas
     const canvasContext = canvas.getContext('2d')
-    canvas.height = viewport.height
-    canvas.width = viewport.width
-    canvas.style.width = '100%'
-    canvas.style.height = '100%'
+    console.log(viewport)
+    canvas.height = viewport.height * 0.8
+    canvas.width = viewport.width * 0.8
+    // canvas.style.width = '100%'
+    // canvas.style.height = '100%'
     page.render({ canvasContext, viewport })
   }
 

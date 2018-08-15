@@ -1,10 +1,12 @@
 {
   "name": "saffron-app",
   "version": "0.0.1",
-  "main": "index.js",
+  "main": "src/app.js",
   "license": "MIT",
   "scripts": {
-    "dev": "parcel src/index.html"
+    "dev": "parcel src/index.html",
+    "build": "parcel build src/index.html --public-url /staging/",
+    "clean": "rimraf dist && rimraf .cache"
   },
   "dependencies": {
     "classnames": "^2.2.6",
@@ -24,9 +26,10 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
+    "eslint": "^5.3.0",
     "node-sass": "^4.9.3",
     "parcel-bundler": "^1.9.7",
-    "eslint": "^5.3.0",
+    "rimraf": "^2.6.2",
     "standard": "^11.0.1"
   }
 }

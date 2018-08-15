@@ -1,0 +1,22 @@
+language: node_js
+node_js:
+- 10
+branches:
+  only:
+  - master
+install:
+  - yarn --ignore-engines
+script: 
+  - yarn add travis-up
+  - cp node_modules/pdfjs-dist/build/pdf.worker.js ./dist/
+before_deploy:
+  - ./bin/up version
+  - NODE_ENV=production yarn build
+deploy:
+  provider: script
+  script: ./bin/up deploy production
+  skip_cleanup: true
+
+env:
+  global:
+    AWS_REGION: us-east-1

@@ -28,6 +28,7 @@ class PlayButton extends React.Component {
     let progress = this.props.progress / 100
     const style = {
       backgroundColor: progress < 1 ? '#CCFCCB' : 'transparent',
+      // backgroundImage: progress < 1 ? 'linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%)' : 'none',
       height: '100%',
       maxHeight: `${progress * 80}px`,
       width: `${80 - (15 * progress)}px`
@@ -40,11 +41,9 @@ class PlayButton extends React.Component {
       <div className={className} onClick={this.props.onClick}>
         <div className='execute-button' title='Execute'>
           <div className={'execute-button-inner'}>
-            <div className={'execute-button-loading'} style={style}>
-            </div>
+            <div className={'execute-button-loading'} style={style}></div>
             <svg width='35' height='35' viewBox='3.5,4.5,24,24'>
-              <path d='M 11 9 L 24 16 L 11 23 z'>
-              </path>
+              <path d='M 11 9 L 24 16 L 11 23 z'></path>
             </svg>
           </div>
         </div>

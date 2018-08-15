@@ -7,6 +7,42 @@
   }
 }
 
+button {
+  border-color: unset;
+  border-style: unset;
+  border-width: 0px;
+  padding: 0;
+}
+
+button:focus {
+  outline: none;
+}
+
+button svg {
+  fill: #fff;
+}
+
+.toolbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  min-height: 40px;
+  background-color: transparent;
+  z-index: 999;
+}
+
+.toolbar > button {
+  width: 40px;
+  height: 40px;
+  background-color: transparent;
+}
+
+.toolbar > button:hover {
+  background-color: #608AAC;
+}
+
 .success {
   background-color: #CCFCCB
 }
@@ -17,6 +53,9 @@
 
 .pdf-preview {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .playground-editor {
@@ -32,7 +71,9 @@
   flex-basis: 60px;
   width: 100%;
 }
+
 /* https://coolors.co/090c08-172a3a-ff01fb-e63946-ccfccb */
+
 body {
   margin: 0;
   background: #FAFAFB;
@@ -78,23 +119,29 @@ header {
   min-height: 100vh;
 }
 
+.download:hover svg {
+  fill: #fff;
+  cursor: pointer;
+}
+
 section {
+  border-left: 5px solid #FAFAFB;
   background-color: #fff;
-  padding: 2em 1em;
   box-sizing: border-box;
+  min-height: 100vh;
+  flex-basis: 50%;
+  width: 50%;
+  max-width: 50%;
+  padding: 10px 0 0 24px;
+}
+
+.container section:nth-child(2) {
+  padding: 0;
+  margin-top: -30px;
 }
 
 section.read-only {
   background-color: transparent;
-}
-
-.container section:nth-child(1) {
-  padding: 0 0 0 24px;
-}
-
-section, article {
-  min-height: 100vh;
-  flex-basis: 50%;
 }
 
 .execute-button-wrap {
@@ -188,8 +235,4 @@ section, article {
   background: 0 0;
   overflow: visible;
   font-size: 1em;
-}
-
-section {
-  border-left: 5px solid #FAFAFB;
 }
