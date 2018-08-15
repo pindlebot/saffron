@@ -1,0 +1,90 @@
+/* https://coolors.co/090c08-172a3a-ff01fb-e63946-ccfccb */
+
+body {
+  margin: 0;
+  background: #FAFAFB;
+  color: #172A3A;
+  font-family: -apple-system,BlinkMacSystemFont,segoe ui,roboto,oxygen,ubuntu,cantarell,fira sans,droid sans,helvetica neue,sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+main {
+  min-height: 100vh;
+  position: relative;
+}
+
+.container {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 0 1em 1em 1em;
+  box-sizing: border-box;
+  min-height: 100vh;
+}
+
+
+section {
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: 0 0 0 34px;
+}
+
+.container section:nth-child(1) {
+  background-color: #fff;
+  border-right: 6px solid #FAFAFB;
+  z-index: 15;
+  overflow: hidden;
+}
+
+.full {
+  flex-basis: 100%;
+  width: 100%;
+  max-width: 100%;  
+}
+
+.half {
+
+}
+
+.container section.half:nth-child(1) {
+  width: calc(50% + 3px);
+  max-width: calc(50% + 3px);
+  flex-basis: calc(50% + 3px);
+}
+
+.container section.half:nth-child(2) {
+  width: calc(50% - 3px);
+  max-width: calc(50% - 3px);
+  flex-basis: calc(50% - 3px);
+}
+
+.hidden {
+  display: none;
+}
+
+.shadow {
+  width: 70px;
+  height: 70px;
+  z-index: 5;
+  border-radius: 50%;
+  position: absolute;
+  transform: scale(1.1) translateY(30px);
+  background-color:#FAFAFB;
+}
+
+.result {
+  color: #fff;
+  font-size: 24px;
+  box-sizing: border-box;
+  line-height: 1.5;
+  padding: 6px 12px;
+  max-height: 50px;
+  z-index: 20;
+}
+
+.result.active {
+  background-color: #517fa4;
+}

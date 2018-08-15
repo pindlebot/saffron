@@ -1,0 +1,41 @@
+
+button {
+  border-color: unset;
+  border-style: unset;
+  border-width: 0px;
+  padding: 0;
+}
+
+button:focus {
+  outline: none;
+}
+
+button svg {
+  fill: #fff;
+}
+
+.toolbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  min-height: 40px;
+  background-color: transparent;
+  z-index: 999;
+}
+
+.toolbar > button {
+  width: 40px;
+  height: 40px;
+  background-color: transparent;
+}
+
+.toolbar > button:hover {
+  background-color: #608AAC;
+}
+
+.download:hover svg {
+  fill: #fff;
+  cursor: pointer;
+}

@@ -1,0 +1,27 @@
+.playground-editor {
+  border-left: 1px solid #F2F1F5;
+  padding: 14px;
+}
+
+.DraftEditor-root {
+  font-family: cousine,sfmono-regular,Consolas,Menlo,liberation mono,ubuntu mono,Courier,monospace;
+  color: #111;
+  max-height: auto;
+  padding: 0;
+  background: 0 0;
+  overflow: visible;
+  font-size: 1em;
+}
+
+pre {
+  margin: 0;
+}
+
+@for $i from 1 through 200 {
+  .public-DraftStyleDefault-pre > pre:nth-child(#{$i}):before {
+      content: "#{$i}";
+      margin-left: -42px;
+      position: absolute;
+      color: #D1CCDC;
+  }
+}

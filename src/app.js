@@ -10,12 +10,11 @@ import {
 } from 'draft-js'
 import { expand, compress } from 'draft-js-compact'
 import connect from './lib/connect'
-import './styles.scss'
+import './styles/styles.scss'
 import PlayButton from './components/PlayButton'
 import { base64ToUint8Array } from './lib/util'
 import PlaygroundEditor from './components/PlaygroundEditor'
 import DownloadIcon from './components/DownloadIcon'
-import './prism.scss'
 import prism from 'prismjs'
 import 'prismjs/components/prism-latex'
 import PrismDecorator from 'draft-js-prism'
@@ -200,6 +199,7 @@ class App extends React.Component {
               {this.state.buffer &&
                 <PdfEmbed data={this.state.buffer} />
               }
+              {window.innerWidth > 960 && <div className={'overlay'}></div>}
             </div>
           </section>
         </div>

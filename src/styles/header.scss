@@ -1,0 +1,26 @@
+.background {
+  background-image: linear-gradient(to right, #243949 0%, #517fa4 100%);
+  position: absolute;
+  height: 160px;
+  width: 100%;
+  z-index: 10;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 160px;
+  padding: 30px 0 0 0;
+  box-sizing: border-box;
+}
+
+.upper, .lower {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-basis: 60px;
+  width: 100%;
+}

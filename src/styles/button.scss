@@ -1,0 +1,58 @@
+.execute-button-wrap {
+  z-index: 20;
+  cursor: pointer;
+  transform: translateY(30px);
+}
+
+.execute {
+  transform: translateY(30px);
+}
+
+.execute-button svg {
+  fill: #FF01FB;
+  z-index: 30;
+}
+
+.loading .execute-button svg {
+  fill: #D1CCDC;
+}
+
+.execute-button {
+  background-color: #FF01FB;
+  width: 75px;
+  height: 75px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 20;
+}
+
+.loading .execute-button {
+  background-color: #D1CCDC;
+}
+
+.execute-button-inner {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.loading .execute-button-inner {
+  /* background-color: transparent; */
+}
+
+.execute-button-loading {
+  height: 80px;
+  width: 80px;
+  position: absolute;
+  clip-path: circle(50% at 50% 50%);
+}
