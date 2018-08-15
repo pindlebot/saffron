@@ -5,38 +5,73 @@ import {
   Editor,
   EditorState,
   convertFromRaw,
+  convertToRaw,
+  Modifier
 } from 'draft-js'
-import { expand } from 'draft-js-compact'
+import { expand, compress } from 'draft-js-compact'
 import connect from './lib/connect'
 import './styles.scss'
 import PlayButton from './components/PlayButton'
 import { base64ToUint8Array } from './lib/util'
 import PlaygroundEditor from './components/PlaygroundEditor'
 import DownloadIcon from './components/DownloadIcon'
+import './prism.scss'
+import prism from 'prismjs'
+import 'prismjs/components/prism-latex'
+import PrismDecorator from 'draft-js-prism'
+import classnames from 'classnames'
+import debounce from 'debounce'
+
+const decorator = new PrismDecorator({
+  prism: prism,
+  getSyntax (block) {
+    return 'latex'
+  }
+})
+
+const DEFAULT_BLOCKS = JSON.stringify([
+  { text: '\\documentclass{article}', type: 'code-block' },
+  { text: '\\begin{document}', type: 'code-block' },
+  { text: 'Hello world!', type: 'code-block' },
+  { text: '\\end{document}', type: 'code-block' }
+])
+
+const getContent = () => {
+  let blocks = JSON.parse(window.localStorage.getItem('data') || DEFAULT_BLOCKS)
+
+  return convertFromRaw(
+    expand({ blocks })
+  )
+}
 
 class App extends React.Component {
   state = {
     editorState: EditorState.createWithContent(
-      convertFromRaw(
-        expand({
-          blocks: [
-            '\\documentclass{article}',
-            '\\begin{document}',
-            'Hello world!',
-            '\\end{document}'
-          ]
-        })
-      )
+      getContent(),
+      decorator
     ),
     buffer: '',
     style: {},
     loading: false,
     progress: 100,
+    focused: false
   }
 
   onChange = editorState => {
-    this.setState({ editorState })
+    console.log(editorState.getDecorator())
+    this.setState({ editorState }, this.save)
   }
+
+  save = debounce(() => {
+    window.localStorage.setItem(
+      'data',
+      JSON.stringify(
+        compress(
+          convertToRaw(this.state.editorState.getCurrentContent())
+        ).blocks
+      )
+    )
+  }, 2000)
 
   download = () => {
     let blob = new Blob([this.state.buffer], { type: 'application/pdf' })
@@ -64,17 +99,63 @@ class App extends React.Component {
     })
   }
   
-  componentDidMount () {
-    let rect = this.ref.getBoundingClientRect()
-    let height = rect.width * Math.sqrt(2)
+  async componentDidMount () {
+    // let rect = this.ref.getBoundingClientRect()
+    // let height = rect.width * Math.sqrt(2)
     // this.setState({
     //  style: {
     //    height: `${height}px`
     //  }
     // })
+    const tex = this.state.editorState.getCurrentContent()
+      .getPlainText('\n')
+   
+    let channel = await connect(Buffer.from(tex), {
+      update: buffer => {
+        let uint8Array = base64ToUint8Array(buffer.toString())
+        this.setState({
+          buffer: uint8Array
+        })
+      }
+    })
+  }
+
+  onPaste = (text, html, editorState) => {
+    let currentContent = editorState.getCurrentContent()
+    let blocks = text.split(/\r?\n/g)
+      .filter(text => text !== '')
+      .map(text => ({ text, type: 'code-block' }))
+    let raw = expand({ blocks: blocks })
+    let contentState = convertFromRaw(raw)
+    let newContentState = Modifier.replaceWithFragment(
+      editorState.getCurrentContent(),
+      editorState.getSelection(),
+      contentState.getBlockMap()
+    )
+
+    let newEditorState = EditorState.push(
+      editorState,
+      newContentState,
+      'insert-fragment'
+    )
+    this.setState({ editorState: newEditorState })
+    return 'handled'
+  }
+
+  onFocus = evt => {
+    console.log(evt)
+    this.setState({ focused: true })
+  }
+
+  onBlur = evt => {
+    console.log(evt)
+    this.setState({ focused: false })
   }
 
   render() {
+    console.log(this.state)
+    const { focused } = this.state
+    const sectionClassName = focused ? 'full' : 'half'
     return (
        <main>
         <div className='background' />
@@ -92,15 +173,18 @@ class App extends React.Component {
           </div>
         </header>
         <div className='container'>
-          <section>
+          <section className={sectionClassName}>
             <div className='playground-editor'>
               <PlaygroundEditor
                 editorState={this.state.editorState}
                 onChange={this.onChange}
+                handlePastedText={this.onPaste}
+                onFocus={this.onFocus}
+                onBlur={this.onBlur}
               />
             </div>
           </section>
-          <section>
+          <section className={focused ? 'hidden' : 'half'}>
             <div
               ref={ref => {
                 this.ref = ref

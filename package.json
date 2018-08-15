@@ -6,15 +6,19 @@
   "scripts": {
     "dev": "parcel src/index.html",
     "build": "parcel build src/index.html --public-url /staging/",
-    "clean": "rimraf dist && rimraf .cache"
+    "clean": "rimraf dist && rimraf .cache",
+    "copy": "mkdir -p dist && cp node_modules/pdfjs-dist/build/pdf.worker.js ./dist/"
   },
   "dependencies": {
     "classnames": "^2.2.6",
+    "debounce": "^1.2.0",
     "draft-js": "^0.10.5",
     "draft-js-compact": "^0.0.4",
+    "draft-js-prism": "^1.0.6",
     "immutable": "^3.8.2",
     "mqtt": "^2.18.3",
     "pdfjs-dist": "^2.0.489",
+    "prismjs": "^1.15.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "whatwg-fetch": "^2.0.4"

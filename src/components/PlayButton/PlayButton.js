@@ -41,9 +41,9 @@ class PlayButton extends React.Component {
       <div className={className} onClick={this.props.onClick}>
         <div className='execute-button' title='Execute'>
           <div className={'execute-button-inner'}>
-            <div className={'execute-button-loading'} style={style}></div>
+            <div className={'execute-button-loading'} style={style} />
             <svg width='35' height='35' viewBox='3.5,4.5,24,24'>
-              <path d='M 11 9 L 24 16 L 11 23 z'></path>
+              <path d='M 11 9 L 24 16 L 11 23 z' />
             </svg>
           </div>
         </div>

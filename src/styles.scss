@@ -1,7 +1,7 @@
-@for $i from 1 through 30 {
-  .notranslate.public-DraftEditor-content > div > div:nth-child(#{$i}):before {
+@for $i from 1 through 200 {
+  .public-DraftStyleDefault-pre > pre:nth-child(#{$i}):before {
       content: "#{$i}";
-      margin-left: -30px;
+      margin-left: -42px;
       position: absolute;
       color: #D1CCDC;
   }
@@ -103,7 +103,7 @@ header {
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 150px;
+  height: 160px;
   padding: 30px 0 0 0;
   box-sizing: border-box;
 }
@@ -113,7 +113,6 @@ header {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  max-width: 960px;
   padding: 0 1em 1em 1em;
   box-sizing: border-box;
   min-height: 100vh;
@@ -129,15 +128,28 @@ section {
   background-color: #fff;
   box-sizing: border-box;
   min-height: 100vh;
+  padding: 0 0 0 34px;
+}
+
+.full {
+  flex-basis: 100%;
+  width: 100%;
+  max-width: 100%;  
+}
+
+.half {
   flex-basis: 50%;
   width: 50%;
   max-width: 50%;
-  padding: 10px 0 0 24px;
+}
+
+.hidden {
+  display: none;
 }
 
 .container section:nth-child(2) {
   padding: 0;
-  margin-top: -30px;
+  margin-top: -40px;
 }
 
 section.read-only {
@@ -235,4 +247,8 @@ section.read-only {
   background: 0 0;
   overflow: visible;
   font-size: 1em;
+}
+
+pre {
+  margin: 0;
 }

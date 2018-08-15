@@ -1,7 +1,9 @@
 import React from 'react'
 import pdfLib from 'pdfjs-dist/build/pdf'
 
-pdfLib.GlobalWorkerOptions.workerSrc = `/pdf.worker.js`
+pdfLib.GlobalWorkerOptions.workerSrc = process.env.NODE_ENV !== 'production'
+  ? '/pdf.worker.js'
+  : '/staging/pdf.worker.js'
 
 class PdfEmbed extends React.Component {
   static defaultProps = {
@@ -33,16 +35,18 @@ class PdfEmbed extends React.Component {
   }
 
   drawPDF = async num => {
+    var PRINT_RESOLUTION = 300;
+    var PRINT_UNITS = PRINT_RESOLUTION / 72.0;
     const { pdf } = this.state
     const page = await pdf.getPage(num)
     const viewport = page.getViewport(this.props.scale)
     const canvas = this.canvas
     const canvasContext = canvas.getContext('2d')
     console.log(viewport)
-    canvas.height = viewport.height * 0.8
-    canvas.width = viewport.width * 0.8
-    // canvas.style.width = '100%'
-    // canvas.style.height = '100%'
+    canvas.height = viewport.height
+    canvas.width = viewport.width
+    //canvas.style.width = '100%'
+    //canvas.style.height = '100%'
     page.render({ canvasContext, viewport })
   }
 

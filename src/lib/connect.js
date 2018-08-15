@@ -19,13 +19,11 @@ export default (texBuffer, { update, progress }) => {
     topics.CONNECTED = `saffron/${channelId}/connected`
     topics.PROGRESS = `saffron/${channelId}/progress`
     topics.END = `saffron/${channelId}/end`
-
+    topics.LOG = `saffron/${channelId}/log`
+  
     channel = mqtt.connect(endpointUrl)
     await new Promise((resolve, reject) => channel.on('connect', resolve))
-    await new Promise((resolve, reject) => channel.subscribe(topics.PROGRESS, resolve))
-    await new Promise((resolve, reject) => channel.subscribe(topics.CONNECTED, resolve))
-    await new Promise((resolve, reject) => channel.subscribe(topics.RESPONSE, resolve))
-    await new Promise((resolve, reject) => channel.subscribe(topics.END, resolve))
+    await new Promise((resolve, reject) => channel.subscribe(Object.values(topics), resolve))
     await new Promise((resolve, reject) => {
       channel.publish(topics.SESSION, JSON.stringify({ channelId, endpointUrl }), { qos: 1 }, resolve)
     })
@@ -54,7 +52,7 @@ export default (texBuffer, { update, progress }) => {
       }
 
       if (topic === topics.PROGRESS) {
-        progress(buffer)
+        if (progress) progress(buffer)
       }
 
       if (topic === topics.RESPONSE) {

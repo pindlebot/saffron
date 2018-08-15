@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const { spawn, exec } = require('child_process')
 const { promisify } = require('util')
 const write = promisify(fs.writeFile)
@@ -8,28 +9,80 @@ const createPresignedURL = require('aws-sign-mqtt')
 const { randomBytes } = require('crypto')
 const mqtt = require('mqtt')
 const unzipper = require('unzipper')
-const http = require('http')
+// const http = require('follow-redirects')
+// const fetch = require('node-fetch')
+const got = require('got')
 
 const CTAN_ENDPOINT = 'http://mirror.utexas.edu/ctan/macros/latex/contrib'
+const DIR = '/tmp/texlive/texmf-local/tex/latex/'
+// http://mirrors.ctan.org/macros/latex/contrib/lipsum/lipsum.dtx
+
+const run = (command) =>
+  new Promise((resolve, reject) => exec(command, (...out) => {
+    console.log(out)
+    resolve(out)
+  }))
+
+const fetchFile = (url, { pathname }) => {
+  let resolve
+  let promise = new Promise(res => {
+    resolve = res
+  })
+  let writable = fs.createWriteStream(path.join(DIR, pathname))
+  writable.on('finish', resolve)
+  let stream = got.stream(url)
+  stream.on('error', console.error.bind(console))
+  stream.pipe(writable)
+  return promise
+}
 
 const fetchPackage = (name) => {
   console.log('installing ' + name)
-  return new Promise((resolve, reject) => {
-    http.get(`${CTAN_ENDPOINT}/${name}.zip`, async res => {
+  return new Promise(async (resolve, reject) => {
+    const { body } = await got(`https://ctan.org/json/2.0/pkg/${name}`, { json: true })
+    if (body.install) {
+      let url = `http://mirrors.ctan.org/install${body.install}`
+      console.log(url)
+
+      let res = got.stream(url)
       let writable = unzipper.Extract({ path: '/tmp/texlive/texmf-local/tex/latex' })
       res.pipe(writable)
       writable.on('close', resolve)
-    })
+    } else if (body.ctan) {
+      let url = `https://s3.amazonaws.com/aws-lambda-binaries/${name}.zip`
+      let res = got.stream(url)
+      let writable = unzipper.Extract({ path: '/tmp/texlive/texmf-local/tex/latex' })
+      res.pipe(writable)
+      writable.on('close', resolve)
+      // let ins = `http://mirrors.ctan.org${body.ctan.path}/${name}.ins`
+      // let dtx = `http://mirrors.ctan.org${body.ctan.path}/${name}.dtx`
+      // await run(`mkdir -p /tmp/texlive/texmf-local/tex/latex/${name}`)
+  
+      // console.log({ ins, dtx })
+      // await fetchFile(ins, { pathname: `${name}/${name}.ins` })
+      // await fetchFile(ins, { pathname: `${name}/${name}.dtx` })
+      // console.log({ ins, dtx })
+      // let files = await list('/tmp/texlive/texmf-local/tex/latex/lipsum')
+      // console.log(files)
+      // await run(`pdflatex /tmp/texlive/texmf-local/tex/latex/${name}/${name}.ins`)
+    } else {
+      reject(new Error('Not found'))
+      // resolve()
+    }
   })
 }
 
-const RE = /\\usepackage\{(.*)\}/
+const RE = /(?<!%)\\usepackage\{(.*)\}/
 
-async function convertTexToPdf (buffer) {
+async function convertTexToPdf (buffer, publish) {
   const id = randomBytes(10).toString('hex')
   const texPathname = `/tmp/${id}.tex`
   await write(texPathname, buffer)
-  const installedPackages = await list('/tmp/texlive/texmf-local/tex/latex').catch(() => ([]))
+  let installedPackages = await list('/tmp/texlive/texmf-local/tex/latex')
+    .catch(() => ([]))
+  let preinstalledPackages = await list('/tmp/texlive/2018/texmf-dist/tex/latex')
+    .catch(() => ([]))
+  installedPackages = installedPackages.concat(preinstalledPackages)
   let lines = buffer.toString().split(/\r?\n/g)
   let dependencies = lines.filter(line => RE.test(line))
     .map(line => line.match(RE)[1])
@@ -52,9 +105,11 @@ async function convertTexToPdf (buffer) {
       }
     })
     child.stdout.on('data', (data) => {
+      publish(data.toString())
       log += data.toString()
     })
     child.stderr.on('data', (data) => {
+      publish(data.toString())
       log += data.toString()
     })
     child.on('error', (err) => {
@@ -71,6 +126,7 @@ module.exports.mqtt = async ({ channelId }, context, callback) => {
   const TOPIC_CONNECTED = `saffron/${channelId}/connected`
   const TOPIC_PROGRESS = `saffron/${channelId}/progress`
   const TOPIC_END = `saffron/${channelId}/end`
+  const TOPIC_LOG = `saffron/${channelId}/log`
 
   const channel = mqtt.connect(createPresignedURL())
   let resolveExecution
@@ -136,7 +192,9 @@ module.exports.mqtt = async ({ channelId }, context, callback) => {
       await binaryPromise
       channel.publish(TOPIC_PROGRESS, '70', { qos: 1 })
 
-      let pdf = await convertTexToPdf(buffer)
+      let pdf = await convertTexToPdf(buffer, (data) => {
+        channel.publish(TOPIC_LOG, data)
+      })
       await new Promise((resolve, reject) => {
         channel.publish(TOPIC_RESPONSE, pdf, resolve)
       })

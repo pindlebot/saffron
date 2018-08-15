@@ -8,7 +8,7 @@ install:
   - yarn --ignore-engines
 script: 
   - yarn add travis-up
-  - cp node_modules/pdfjs-dist/build/pdf.worker.js ./dist/
+  - mkdir -p dist && cp node_modules/pdfjs-dist/build/pdf.worker.js ./dist/
 before_deploy:
   - ./bin/up version
   - NODE_ENV=production yarn build
