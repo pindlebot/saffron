@@ -20,6 +20,8 @@ import 'prismjs/components/prism-latex'
 import PrismDecorator from 'draft-js-prism'
 import classnames from 'classnames'
 import debounce from 'debounce'
+import { Map } from 'immutable'
+import CodeBlock from './components/CodeBlock'
 
 const decorator = new PrismDecorator({
   prism: prism,
@@ -34,6 +36,13 @@ const DEFAULT_BLOCKS = JSON.stringify([
   { text: 'Hello world!', type: 'code-block' },
   { text: '\\end{document}', type: 'code-block' }
 ])
+
+const blockRenderMap = Map({
+  'code-block': {
+    element: 'code',
+    wrapper: <CodeBlock />
+  }
+})
 
 const getContent = () => {
   let blocks = JSON.parse(window.localStorage.getItem('data') || DEFAULT_BLOCKS)
@@ -51,7 +60,7 @@ class App extends React.Component {
     ),
     buffer: '',
     style: {},
-    loading: false,
+    loading: true,
     progress: 100,
     focused: false
   }
@@ -99,13 +108,6 @@ class App extends React.Component {
   }
   
   async componentDidMount () {
-    // let rect = this.ref.getBoundingClientRect()
-    // let height = rect.width * Math.sqrt(2)
-    // this.setState({
-    //  style: {
-    //    height: `${height}px`
-    //  }
-    // })
     const tex = this.state.editorState.getCurrentContent()
       .getPlainText('\n')
    
@@ -113,8 +115,12 @@ class App extends React.Component {
       update: buffer => {
         let uint8Array = base64ToUint8Array(buffer.toString())
         this.setState({
-          buffer: uint8Array
+          buffer: uint8Array,
+          loading: false
         })
+      },
+      progress: buffer => {
+        this.setState({ progress: parseInt(buffer.toString()) })
       }
     })
   }
@@ -180,6 +186,7 @@ class App extends React.Component {
                 handlePastedText={this.onPaste}
                 onFocus={this.onFocus}
                 onBlur={this.onBlur}
+                blockRenderMap={blockRenderMap}
               />
             </div>
           </section>

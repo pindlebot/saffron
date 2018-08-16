@@ -1,6 +1,6 @@
 .playground-editor {
   border-left: 1px solid #F2F1F5;
-  padding: 14px;
+  padding-top: 10px;
 }
 
 .DraftEditor-root {
@@ -24,4 +24,48 @@ pre {
       position: absolute;
       color: #D1CCDC;
   }
+}
+
+.code-block-content {
+  border-radius: 0px 0px 2px 0px;
+  font-family: monospace;
+  font-weight: 500;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+}
+
+.code-block-content pre {
+  color: #4c6072;
+  display: inline-block;
+  line-height: 20px;
+  white-space: pre-wrap;
+  overflow: visible;
+  font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;
+  font-size: 12px;
+  word-wrap: normal;
+  white-space: pre;
+  margin: 0;
+}
+
+.code-block-content pre:nth-child(1) {
+  border-bottom-left-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  flex-basis: 40px;
+  margin: 0;
+  text-align: center;
+  padding: 0;
+  color: rgba(27,31,35,0.3);
+}
+
+.code-block-content pre:nth-child(2n) {
+  overflow-x: scroll;
+  white-space: pre;
+  flex-basis: calc(100% - 40px);
+  margin: 0;
+  background-color: #fff;
+  border-bottom-right-radius: 2px;
+  padding: 0;
 }

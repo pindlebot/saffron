@@ -24,11 +24,11 @@ class PlayButton extends React.Component {
   //}
 
   render () {
+    console.log(this.props)
     let { loading } = this.props
     let progress = this.props.progress / 100
     const style = {
       backgroundColor: progress < 1 ? '#CCFCCB' : 'transparent',
-      // backgroundImage: progress < 1 ? 'linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%)' : 'none',
       height: '100%',
       maxHeight: `${progress * 80}px`,
       width: `${80 - (15 * progress)}px`
@@ -38,7 +38,7 @@ class PlayButton extends React.Component {
       loading ? 'loading' : ''
     )
     return (
-      <div className={className} onClick={this.props.onClick}>
+      <button className={className} onClick={this.props.onClick} disabled={loading}>
         <div className='execute-button' title='Execute'>
           <div className={'execute-button-inner'}>
             <div className={'execute-button-loading'} style={style} />
@@ -47,7 +47,7 @@ class PlayButton extends React.Component {
             </svg>
           </div>
         </div>
-      </div>
+      </button>
     )
   }
 }

@@ -1366,10 +1366,11 @@ path-type@^2.0.0:
   dependencies:
     pify "^2.0.0"
 
-pdflatex-lambda@^0.0.6:
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/pdflatex-lambda/-/pdflatex-lambda-0.0.6.tgz#c3791d177536f0555bc273169c113776b654e5c4"
+pdflatex-lambda@^0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/pdflatex-lambda/-/pdflatex-lambda-0.0.8.tgz#471cf9f800330021eb466e1558c2a59a7194bdac"
   dependencies:
+    got "^9.0.0"
     unzipper "^0.9.2"
 
 pify@^2.0.0:

@@ -12,7 +12,7 @@
     "aws-sign-mqtt": "^0.0.1",
     "got": "^9.0.0",
     "mqtt": "^2.18.3",
-    "pdflatex-lambda": "^0.0.6",
+    "pdflatex-lambda": "^0.0.8",
     "unzip-stream": "^0.3.0"
   }
 }
