@@ -1,3 +1,12 @@
+$primary-color-dark:   #455A64;
+$primary-color:        #607D8B;
+$primary-color-light:  #CFD8DC;
+$primary-color-text:   #FFFFFF;
+$accent-color:         #FF4081;
+$primary-text-color:   #212121;
+$secondary-text-color: #757575;
+$divider-color:        #BDBDBD;
+
 @import './main.scss';
 @import './button.scss';
 @import './editor.scss';
@@ -5,3 +14,4 @@
 @import './pdf.scss';
 @import './prism.scss';
 @import './toolbar.scss';
+@import './progress.scss';

@@ -42,12 +42,11 @@ export default (texBuffer, { update, progress }) => {
       console.log('RECONNECT', channelId)
     })
     channel.on('message', (topic, buffer) => {
-      console.log({ topic })
       if (topic === topics.END) {
         channel.end()
       }
       if (topic === topics.CONNECTED) {
-        console.log(buffer.toString())
+        // console.log(buffer.toString())
         publish()
       }
 
@@ -58,7 +57,7 @@ export default (texBuffer, { update, progress }) => {
       if (topic === topics.RESPONSE) {
         update(buffer)
       } else {
-        console.log(buffer.toString())
+        // console.log(buffer.toString())
       }
     })
   }

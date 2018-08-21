@@ -1,9 +1,10 @@
 /* https://coolors.co/090c08-172a3a-ff01fb-e63946-ccfccb */
 
+
 body {
   margin: 0;
   background: #FAFAFB;
-  color: #172A3A;
+  color: $primary-text-color;
   font-family: -apple-system,BlinkMacSystemFont,segoe ui,roboto,oxygen,ubuntu,cantarell,fira sans,droid sans,helvetica neue,sans-serif;
   font-size: 16px;
   line-height: 1.6;
@@ -36,6 +37,7 @@ section {
 .container section:nth-child(1) {
   background-color: #fff;
   border-right: 6px solid #FAFAFB;
+  border-left: 1px solid #F2F1F5;
   z-index: 15;
   overflow: hidden;
 }
@@ -50,6 +52,7 @@ section {
   width: calc(50% + 3px);
   max-width: calc(50% + 3px);
   flex-basis: calc(50% + 3px);
+  min-height: 792px;
 }
 
 .container section.half:nth-child(2) {

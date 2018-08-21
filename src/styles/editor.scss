@@ -1,5 +1,4 @@
 .playground-editor {
-  border-left: 1px solid #F2F1F5;
   padding-top: 10px;
 }
 
@@ -15,15 +14,6 @@
 
 pre {
   margin: 0;
-}
-
-@for $i from 1 through 200 {
-  .public-DraftStyleDefault-pre > pre:nth-child(#{$i}):before {
-      content: "#{$i}";
-      margin-left: -42px;
-      position: absolute;
-      color: #D1CCDC;
-  }
 }
 
 .code-block-content {

@@ -11,6 +11,7 @@ import {
 import { expand, compress } from 'draft-js-compact'
 import connect from './lib/connect'
 import './styles/styles.scss'
+import 'draft-js/dist/Draft.css'
 import PlayButton from './components/PlayButton'
 import { base64ToUint8Array } from './lib/util'
 import PlaygroundEditor from './components/PlaygroundEditor'
@@ -22,6 +23,8 @@ import classnames from 'classnames'
 import debounce from 'debounce'
 import { Map } from 'immutable'
 import CodeBlock from './components/CodeBlock'
+import Progress from './components/Progress'
+import { unstable_deferredUpdates as deferredUpdates } from 'react-dom'
 
 const decorator = new PrismDecorator({
   prism: prism,
@@ -61,12 +64,11 @@ class App extends React.Component {
     buffer: '',
     style: {},
     loading: true,
-    progress: 100,
+    progress: 0,
     focused: false
   }
 
   onChange = editorState => {
-    console.log(editorState.getDecorator())
     this.setState({ editorState }, this.save)
   }
 
@@ -85,44 +87,39 @@ class App extends React.Component {
     let blob = new Blob([this.state.buffer], { type: 'application/pdf' })
     let url = window.URL.createObjectURL(blob)
     window.open(url)
-    setTimeout(() => window.URL.revokeObjectURL(url), 100)
+    setTimeout(() => {
+
+    })
   }
   
-  handlePlay = async () => {
+  handlePlay = async (evt, initialLoad) => {
     const tex = this.state.editorState.getCurrentContent()
       .getPlainText('\n')
    
-    this.setState({ loading: true, buffer: undefined })
+    if (!initialLoad) {
+      await new Promise((resolve, reject) => 
+        this.setState({ loading: true, buffer: undefined, progress: 0 }, resolve)
+      )
+    }
+    
     let channel = await connect(Buffer.from(tex), {
       update: buffer => {
         let uint8Array = base64ToUint8Array(buffer.toString())
-        this.setState({
-          buffer: uint8Array,
-          loading: false
-        })
+        deferredUpdates(
+          () => this.setState({
+            buffer: uint8Array,
+            loading: false
+          })
+        )
       },
       progress: buffer => {
-        this.setState({ progress: parseInt(buffer.toString()) })
+        deferredUpdates(() =>this.setState({ progress: parseInt(buffer.toString()) }))
       }
     })
   }
   
   async componentDidMount () {
-    const tex = this.state.editorState.getCurrentContent()
-      .getPlainText('\n')
-   
-    let channel = await connect(Buffer.from(tex), {
-      update: buffer => {
-        let uint8Array = base64ToUint8Array(buffer.toString())
-        this.setState({
-          buffer: uint8Array,
-          loading: false
-        })
-      },
-      progress: buffer => {
-        this.setState({ progress: parseInt(buffer.toString()) })
-      }
-    })
+    this.handlePlay(null, true)
   }
 
   onPaste = (text, html, editorState) => {
@@ -148,12 +145,10 @@ class App extends React.Component {
   }
 
   onFocus = evt => {
-    console.log(evt)
     this.setState({ focused: true })
   }
 
   onBlur = evt => {
-    console.log(evt)
     this.setState({ focused: false })
   }
 
@@ -164,6 +159,7 @@ class App extends React.Component {
     return (
        <main>
         <div className='background' />
+        <Progress progress={this.state.progress} />
         <header>
           <div className={'upper'}>
             <div className={'result active'}>PdfLatex</div>
@@ -178,7 +174,7 @@ class App extends React.Component {
           </div>
         </header>
         <div className='container'>
-          <section className={sectionClassName}>
+          <section className={'half'}>
             <div className='playground-editor'>
               <PlaygroundEditor
                 editorState={this.state.editorState}
@@ -190,7 +186,7 @@ class App extends React.Component {
               />
             </div>
           </section>
-          <section className={focused ? 'hidden' : 'half'}>
+          <section className={'half'}>
             <div
               ref={ref => {
                 this.ref = ref

@@ -9,7 +9,7 @@
 }
 
 .execute-button svg {
-  fill: #FF01FB;
+  fill: $accent-color;
   z-index: 30;
 }
 
@@ -18,7 +18,7 @@
 }
 
 .execute-button {
-  background-color: #FF01FB;
+  background-color: $accent-color;
   width: 75px;
   height: 75px;
   box-sizing: border-box;
@@ -44,10 +44,6 @@
   justify-content: center;
   align-items: center;
   position: relative;
-}
-
-.loading .execute-button-inner {
-  /* background-color: transparent; */
 }
 
 .execute-button-loading {

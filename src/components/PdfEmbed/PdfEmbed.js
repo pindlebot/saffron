@@ -41,30 +41,16 @@ class PdfEmbed extends React.Component {
     const viewport = page.getViewport(this.props.scale)
     const canvas = this.canvas
     const canvasContext = canvas.getContext('2d')
-    console.log(viewport)
-    // canvas.height = viewport.height
-    // canvas.width = viewport.width
     let height = resolution * viewport.height
     let width = resolution * viewport.width
     canvas.height = height
     canvas.width = width
-    // canvas.style.height = viewport.height
-    // canvas.style.width = viewport.width
 
     page.render({
       canvasContext,
       viewport,
       transform: [resolution, 0, 0, resolution, 0, 0] 
     })
-    //let data = canvasContext.getImageData(
-    //  100 * 2,
-    //  100 * 2,
-    //  (612 - 200) * 2,
-    //  (792 - 200) * 2
-    //)
-    //canvasContext.putImageData(data,0,0);
-
-    //console.log(data)
   }
 
   onDocumentComplete = async pdf => {
@@ -72,12 +58,6 @@ class PdfEmbed extends React.Component {
       this.drawPDF(this.props.page)
     })
   }
- 
-  //componentWillReceiveProps (nextProps) {
-  //  if (nextProps.page !== this.props.page) {
-  //    this.drawPDF(nextProps.page)
-  //  }
-  //}
 
   onDocumentError = err => {
     if (err.isCanceled && err.pdf) {
