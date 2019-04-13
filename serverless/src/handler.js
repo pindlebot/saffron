@@ -9,35 +9,13 @@ const createPresignedURL = require('aws-sign-mqtt')
 const { randomBytes } = require('crypto')
 const mqtt = require('mqtt')
 const unzipper = require('unzipper')
-// const http = require('follow-redirects')
-// const fetch = require('node-fetch')
 const got = require('got')
 
 const CTAN_ENDPOINT = 'http://mirror.utexas.edu/ctan/macros/latex/contrib'
 const DIR = '/tmp/texlive/texmf-local/tex/latex/'
-// http://mirrors.ctan.org/macros/latex/contrib/lipsum/lipsum.dtx
-
-const run = (command) =>
-  new Promise((resolve, reject) => exec(command, (...out) => {
-    console.log(out)
-    resolve(out)
-  }))
-
-const fetchFile = (url, { pathname }) => {
-  let resolve
-  let promise = new Promise(res => {
-    resolve = res
-  })
-  let writable = fs.createWriteStream(path.join(DIR, pathname))
-  writable.on('finish', resolve)
-  let stream = got.stream(url)
-  stream.on('error', console.error.bind(console))
-  stream.pipe(writable)
-  return promise
-}
+// http://mirrors.ctan.org/macros/latex/contrib/lipsum/lipsum.dtxs
 
 const fetchPackage = (name) => {
-  console.log('installing ' + name)
   return new Promise(async (resolve, reject) => {
     const { body } = await got(`https://ctan.org/json/2.0/pkg/${name}`, { json: true })
     if (body.install) {
@@ -54,20 +32,8 @@ const fetchPackage = (name) => {
       let writable = unzipper.Extract({ path: '/tmp/texlive/texmf-local/tex/latex' })
       res.pipe(writable)
       writable.on('close', resolve)
-      // let ins = `http://mirrors.ctan.org${body.ctan.path}/${name}.ins`
-      // let dtx = `http://mirrors.ctan.org${body.ctan.path}/${name}.dtx`
-      // await run(`mkdir -p /tmp/texlive/texmf-local/tex/latex/${name}`)
-  
-      // console.log({ ins, dtx })
-      // await fetchFile(ins, { pathname: `${name}/${name}.ins` })
-      // await fetchFile(ins, { pathname: `${name}/${name}.dtx` })
-      // console.log({ ins, dtx })
-      // let files = await list('/tmp/texlive/texmf-local/tex/latex/lipsum')
-      // console.log(files)
-      // await run(`pdflatex /tmp/texlive/texmf-local/tex/latex/${name}/${name}.ins`)
     } else {
       reject(new Error('Not found'))
-      // resolve()
     }
   })
 }
@@ -96,7 +62,6 @@ async function convertTexToPdf (buffer, publish) {
       })
     })
   }
-  console.log({ installedPackages })
   await new Promise((resolve, reject) => {
     let log = ''
     const child = spawn('pdflatex', ['-output-directory=/tmp', '-interaction=nonstopmode', texPathname], {

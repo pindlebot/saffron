@@ -1,12 +1,18 @@
 service: saffron
 
+custom:
+  debug: "*"
+  deploymentBucket: 'global-deployment-bucket'
+
 provider:
   stage: dev
   name: aws
   runtime: nodejs8.10
   region: us-east-1
+  deploymentBucket:
+    name: ${self:custom.deploymentBucket}
   environment:
-    AWS_IOT_HOST: 'adx5fx5ykfiey.iot.us-east-1.amazonaws.com'
+    AWS_IOT_HOST: 'adx5fx5ykfiey-ats.iot.us-east-1.amazonaws.com'
   iamRoleStatements:
     - Effect: "Allow"
       Action:
